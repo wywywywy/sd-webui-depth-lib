@@ -21,6 +21,17 @@ class Script(scripts.Script):
   def ui(self, is_img2img):
     return ()
 
+def get_image_files(type):
+  image_files = []
+  type_path = os.path.join(maps_path, type)
+  for filename in os.listdir(type_path):
+    file_path = os.path.join(type_path, filename)
+    if os.path.isfile(file_path):
+      filename_lower = filename.lower()
+      if filename_lower.endswith(".png") or filename_lower.endswith(".jpg") or filename_lower.endswith(".jpeg"):
+        image_files.append(file_path)
+  return image_files
+
 def on_ui_tabs():
   png_input_area = gr.Image(label="Selected", elem_id="depth_lib_png_input_area")
 
@@ -38,7 +49,7 @@ def on_ui_tabs():
         with gr.Tab("Maps"):
           for t in types:
             with gr.Tab(t.capitalize()):
-              dataset = gr.Examples(examples=os.path.join(maps_path, t), inputs=[png_input_area], examples_per_page=24, label=None, elem_id="depth_lib_examples")
+              dataset = gr.Examples(examples=get_image_files(t), inputs=[png_input_area], examples_per_page=24, label=None, elem_id="depth_lib_examples")
           with gr.Row():
             add_map = gr.Button(value="Add", variant="primary")
             remove_map = gr.Button(value="Remove Selected")
